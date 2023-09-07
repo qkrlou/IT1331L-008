@@ -74,6 +74,14 @@
     <br />
     <div id="speech-player"></div>
     </div>
+
+    <script>
+        const voiceCode = document.querySelector('input[name="gender"]:checked').value === "male" ? "fil-PH-1" :
+        "fil-PH-2";
+        const message = document.getElementById("message").value;
+        const speed = document.getElementById("speed").value;
+        const pitch = document.getElementById("pitch").value;
+    </script>
 </body>
 
 </html>
