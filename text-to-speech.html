@@ -76,11 +76,21 @@
     </div>
 
     <script>
-        const voiceCode = document.querySelector('input[name="gender"]:checked').value === "male" ? "fil-PH-1" :
-        "fil-PH-2";
-        const message = document.getElementById("message").value;
-        const speed = document.getElementById("speed").value;
-        const pitch = document.getElementById("pitch").value;
+        async function loadPlayer() {
+            const voiceCode = document.querySelector('input[name="gender"]:checked').value === "male" ? "fil-PH-1" : "fil-PH-2";
+            const message = document.getElementById("message").value;
+            const speed = document.getElementById("speed").value;
+            const pitch = document.getElementById("pitch").value;
+
+            // Retrieved values are given action
+            console.log("Voice Code:", voiceCode);
+            console.log("Message:", message);
+            console.log("Speed:", speed);
+            console.log("Pitch:", pitch);
+        }
+
+        // Add an event listener to the "Generate Speech" button to call loadPlayer() when clicked.
+        document.getElementById("generate-speech").addEventListener("click", loadPlayer);
     </script>
 </body>
 
