@@ -70,7 +70,7 @@
     <label for="pitch">Pitch:</label>
     <input type="number" id="pitch" name="pitch" max="2" min="0" placeholder="Enter pitch...">
 
-    <button>Generate Speech</button>
+    <button onClick>Generate Speech</button>
     <br />
     <div id="speech-player"></div>
     </div>
@@ -79,18 +79,60 @@
         async function loadPlayer() {
             const voiceCode = document.querySelector('input[name="gender"]:checked').value === "male" ? "fil-PH-1" : "fil-PH-2";
             const message = document.getElementById("message").value;
-            const speed = document.getElementById("speed").value;
-            const pitch = document.getElementById("pitch").value;
+            const speed = parseFloat(document.getElementById("speed").value);
+            const pitch = parseFloat(document.getElementById("pitch").value);
 
-            // Retrieved values are given action
             console.log("Voice Code:", voiceCode);
             console.log("Message:", message);
             console.log("Speed:", speed);
             console.log("Pitch:", pitch);
+
+            // Check if the Web Speech API is supported in the browser
+            if ('speechSynthesis' in window) {
+                const speechSynthesis = window.speechSynthesis; // Get the list of available voices
+                const voices = await window.speechSynthesis.getVoices(); // Find the voice with the specified voiceCode
+                const selectedVoice = voices.find(voice => voice.lang === voiceCode);
+       
+                if (selectedVoice) { // Create a SpeechSynthesisUtterance with the message
+                    const utterance = new SpeechSynthesisUtterance(message); // Set the selected voice, speed, and pitch
+                    utterance.voice = selectedVoice;
+                    utterance.rate = speed;
+                    utterance.pitch = pitch;
+           
+                    // Speak the message
+                    speechSynthesis.speak(utterance);
+                } else {
+                    console.error(`Voice with code ${voiceCode} not found.`);
+                }
+            } else {
+                console.error('Web Speech API is not supported in this browser.');
+            }
         }
 
         // Add an event listener to the "Generate Speech" button to call loadPlayer() when clicked.
         document.getElementById("generate-speech").addEventListener("click", loadPlayer);
+
+        async function generateSpeech(voiceCode, speed, pitch, message) {
+             if ('speechSynthesis' in window) { 
+                const speechSynthesis = window.speechSynthesis;
+                const voices = await window.speechSynthesis.getVoices();
+                const selectedVoice = voices.find(voice => voice.lang === voiceCode);
+
+                if (selectedVoice) {
+                    const utterance = new SpeechSynthesisUtterance(message);
+
+                    utterance.voice = selectedVoice;
+                    utterance.rate = speed;
+                    utterance.pitch = pitch;
+
+                    speechSynthesis.speak(utterance);
+                } else {
+                    console.error(`Voice with code ${voiceCode} not found.`);
+                }
+            } else {
+                console.error('Web Speech API is not supported in this browser.');
+            }
+        }
     </script>
 </body>
 
