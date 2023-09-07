@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech</title>
+    <style>
+        /* Basic styling for the form container */
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Style for labels */
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Style for text input elements */
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Style for radio buttons */
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        /* Center the radio buttons */
+        .gender-label {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Add a bit of space between the radio buttons and the label */
+        .gender-label label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <label class="gender-label">
+            <span>Gender:</span>
+            <input type="radio" name="gender" id="male" value="male">
+            <label for="male">Male</label>
+            <input type="radio" name="gender" id="female" value="female">
+            <label for="female">Female</label>
+        </label>
+
+    <label for="message">Message:</label>
+    <textarea id="message" name="message" rows="4" maxlength="500"
+        placeholder="Enter your message here..."></textarea>
+
+    <label for="speed">Speed:</label>
+    <input type="number" id="speed" name="speed" max="2" min="0" placeholder="Enter speed...">
+
+    <label for="pitch">Pitch:</label>
+    <input type="number" id="pitch" name="pitch" max="2" min="0" placeholder="Enter pitch...">
+
+    <button>Generate Speech</button>
+    <br />
+    <div id="speech-player"></div>
+    </div>
+</body>
+
+</html>
