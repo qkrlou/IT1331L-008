@@ -15,7 +15,7 @@
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        
+
         /* Style for labels */
         label {
             display: block;
@@ -59,78 +59,55 @@
             <input type="radio" name="gender" id="female" value="female">
             <label for="female">Female</label>
         </label>
-
-    <label for="message">Message:</label>
-    <textarea id="message" name="message" rows="4" maxlength="500"
-        placeholder="Enter your message here..."></textarea>
-
-    <label for="speed">Speed:</label>
-    <input type="number" id="speed" name="speed" max="2" min="0" placeholder="Enter speed...">
-
-    <label for="pitch">Pitch:</label>
-    <input type="number" id="pitch" name="pitch" max="2" min="0" placeholder="Enter pitch...">
-
-    <button onClick>Generate Speech</button>
-    <br />
-    <div id="speech-player"></div>
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" rows="4" maxlength="500"
+            placeholder="Enter your message here..."></textarea>
+        <label for="speed">Speed:</label>
+        <input type="number" id="speed" name="speed" max="2" min="0" placeholder="Enter speed...">
+        <label for="pitch">Pitch:</label>
+        <input type="number" id="pitch" name="pitch" max="2" min="0" placeholder="Enter pitch...">
+        <button onClick="loadPlayer()">Generate Speech</button>
+        <br />
+        <div id="speech-player"></div>
     </div>
 
     <script>
         async function loadPlayer() {
-            const voiceCode = document.querySelector('input[name="gender"]:checked').value === "male" ? "fil-PH-1" : "fil-PH-2";
+            const voiceCode = document.querySelector('input[name="gender"]:checked').value === "male" ? "fil-PH-1" :"fil-PH-2";
             const message = document.getElementById("message").value;
-            const speed = parseFloat(document.getElementById("speed").value);
-            const pitch = parseFloat(document.getElementById("pitch").value);
-
-            console.log("Voice Code:", voiceCode);
-            console.log("Message:", message);
-            console.log("Speed:", speed);
-            console.log("Pitch:", pitch);
-
-            // Check if the Web Speech API is supported in the browser
-            if ('speechSynthesis' in window) {
-                const speechSynthesis = window.speechSynthesis; // Get the list of available voices
-                const voices = await window.speechSynthesis.getVoices(); // Find the voice with the specified voiceCode
-                const selectedVoice = voices.find(voice => voice.lang === voiceCode);
-       
-                if (selectedVoice) { // Create a SpeechSynthesisUtterance with the message
-                    const utterance = new SpeechSynthesisUtterance(message); // Set the selected voice, speed, and pitch
-                    utterance.voice = selectedVoice;
-                    utterance.rate = speed;
-                    utterance.pitch = pitch;
-           
-                    // Speak the message
-                    speechSynthesis.speak(utterance);
-                } else {
-                    console.error(`Voice with code ${voiceCode} not found.`);
-                }
-            } else {
-                console.error('Web Speech API is not supported in this browser.');
-            }
+            const speed = document.getElementById("speed").value;
+            const pitch = document.getElementById("pitch").value;
+            let response = await generateSpeech(voiceCode, message, speed, pitch);
+            const speechHTML = `<audio controls><source src="${response.result.audio_url}" type="audio/ogg"></audio>`;
+            document.getElementById('speech-player').innerHTML = speechHTML;
+            console.log(response.result.audio_url);
         }
 
-        // Add an event listener to the "Generate Speech" button to call loadPlayer() when clicked.
-        document.getElementById("generate-speech").addEventListener("click", loadPlayer);
+        async function generateSpeech(voiceCode, message, speed, pitch) {
+            const url = 'https://cloudlabs-text-to-speech.p.rapidapi.com/synthesize';
+            const options = {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                    'X-RapidAPI-Key': '4dda8a88f4mshfa73fb63294effdp1c64bdjsn3c353136408d',
+                    'X-RapidAPI-Host': 'cloudlabs-text-to-speech.p.rapidapi.com'
+                },
+                body: new URLSearchParams({
+                    voice_code: voiceCode,
+                    text: message,
+                    speed: speed,
+                    pitch: speed,
+                    output_type: 'audio_url'
+                })
+            };
 
-        async function generateSpeech(voiceCode, speed, pitch, message) {
-             if ('speechSynthesis' in window) { 
-                const speechSynthesis = window.speechSynthesis;
-                const voices = await window.speechSynthesis.getVoices();
-                const selectedVoice = voices.find(voice => voice.lang === voiceCode);
-
-                if (selectedVoice) {
-                    const utterance = new SpeechSynthesisUtterance(message);
-
-                    utterance.voice = selectedVoice;
-                    utterance.rate = speed;
-                    utterance.pitch = pitch;
-
-                    speechSynthesis.speak(utterance);
-                } else {
-                    console.error(`Voice with code ${voiceCode} not found.`);
-                }
-            } else {
-                console.error('Web Speech API is not supported in this browser.');
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+                console.log(result);
+                return result
+            } catch (error) {
+                console.error(error);
             }
         }
     </script>
